@@ -7,7 +7,7 @@ import * as schema from "./schema";
 
 // ۴. ساختن Client
 const client = createClient({
-  url: process.env.DATABASE_URL ?? "file:local.db", // مسیر فایل دیتابیس
+  url: process.env.DATABASE_URL ?? "file:data.db", // مسیر فایل دیتابیس
 });
 
 // ۵. ساختن db با ترکیب Client و Schema
