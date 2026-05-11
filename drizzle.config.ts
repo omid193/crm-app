@@ -4,7 +4,7 @@ import type { Config } from "drizzle-kit";
 // ۲. اکسپورت تنظیمات
 export default {
   // ۳. مسیر فایل schema
-  schema: "./db/schema.ts",
+  schema: "./lib/db/schema",
   // ۴. مسیر خروجی مایگریشن‌ها
   out: "./drizzle",
   // ۵. نوع دیتابیس
