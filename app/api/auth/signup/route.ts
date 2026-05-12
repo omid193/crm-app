@@ -1,54 +1,39 @@
 // app/api/auth/signup/route.ts
-
 import { db } from "@/lib/db/db";
 import { users } from "@/lib/db/schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { ApiResponse } from "@/lib/api-responses";
 
 const SignupSchema = z.object({
-  name: z.string().min(2, "name have to be at leas 2character"),
-  email: z.string().email("not correct"),
-  password: z.string().min(6, "have be 6 character"),
+  name: z.string().min(2, "name have to be at least 2 characters"),
+  email: z.string().email("email is not correct"),
+  password: z.string().min(6, "password have be 6 characters"),
 });
 
-// ساخت تایپ به صورت داینامیک از روی اسکیمایی که همینجا ساختیم
 type SignupInput = z.infer<typeof SignupSchema>;
 
-export async function POST(req: NextRequest) {
-  // ایمن کردن داده ها
+export async function POST(req: Request) {
   try {
     const body: SignupInput = await req.json();
     const validation = SignupSchema.safeParse(body);
 
-    // ! شرط وجود داده ها
-    // if (!name || !email || !password) {
-    //   return NextResponse.json({ error: "all filed are necessary" },{ status: 400 },);
-    // }
-    // بجای اون بالایی این رو مینویسیم :
-
     if (!validation.success) {
-      return NextResponse.json(
-        { error: validation.error.errors },
-        { status: 400 },
-      );
+      const firstError = validation.error.errors[0];
+      return ApiResponse.badRequest(firstError.message);
     }
 
     const { name, email, password } = validation.data;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // شرط تکراری نبودن ایمیل
     const existingEmail = await db
       .select({ id: users.id })
       .from(users)
       .where(eq(users.email, email));
 
     if (existingEmail.length > 0) {
-      return NextResponse.json(
-        { error: "this email already exists" },
-        { status: 409 },
-      );
+      return ApiResponse.conflict("this email already exists");
     }
 
     const [newUser] = await db
@@ -58,9 +43,8 @@ export async function POST(req: NextRequest) {
 
     const { password: _, ...safeUser } = newUser;
 
-    return NextResponse.json(safeUser, { status: 201 });
+    return ApiResponse.success(safeUser, 201);
   } catch (error) {
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    return ApiResponse.serverError(error);
   }
 }
-// thunder client : http://localhost:3000/api/auth/signup
