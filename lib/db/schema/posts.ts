@@ -12,9 +12,11 @@ export const posts = sqliteTable("posts", {
   }).notNull(),
   location: text("location"),
   salary: text("salary"),
+
   authorId: integer("author_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
     () => new Date(),
   ),

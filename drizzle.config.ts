@@ -1,5 +1,6 @@
 // ۱. ایمپورت تایپ Config
 import type { Config } from "drizzle-kit";
+import config from "./lib/db/config";
 
 // ۲. اکسپورت تنظیمات
 export default {
@@ -11,6 +12,6 @@ export default {
   dialect: "sqlite",
   // ۶. اطلاعات اتصال به دیتابیس
   dbCredentials: {
-    url: "data.db",
+    url: config.DATABASE_URL,
   },
 } satisfies Config;
