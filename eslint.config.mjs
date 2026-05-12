@@ -13,6 +13,20 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+
+  {
+    rules: {
+      // نادیده گرفتن متغیرهایی که با _ شروع می‌شن
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_", // آرگومان‌های تابع (_password)
+          varsIgnorePattern: "^_", // متغیرهای معمولی (_temp)
+          caughtErrorsIgnorePattern: "^_", // متغیرهای catch (_error)
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
