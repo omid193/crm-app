@@ -1,18 +1,10 @@
 // app/api/auth/signup/route.ts
-import { db } from "@/lib/db/db";
-import { users } from "@/lib/db/schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import { z } from "zod";
+import { db } from "@/lib/db";
+import { users } from "@/lib/db/schema";
 import { ApiResponse } from "@/lib/api-responses";
-
-const SignupSchema = z.object({
-  name: z.string().min(2, "name have to be at least 2 characters"),
-  email: z.string().email("email is not correct"),
-  password: z.string().min(6, "password have be 6 characters"),
-});
-
-type SignupInput = z.infer<typeof SignupSchema>;
+import { SignupSchema, type SignupInput } from "@/lib/validations";
 
 export async function POST(req: Request) {
   try {

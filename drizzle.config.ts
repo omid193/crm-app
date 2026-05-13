@@ -1,6 +1,6 @@
 // ۱. ایمپورت تایپ Config
 import type { Config } from "drizzle-kit";
-import config from "./lib/db/config";
+import config from "./lib/config";
 
 // ۲. اکسپورت تنظیمات
 export default {

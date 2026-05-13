@@ -1,8 +1,9 @@
-// lib/db/db.ts
+// تنظیمات و نصب اسکیمای دریزل
+
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "./schema";
-import config from "./config";
+import config from "../config";
 
 const client = createClient({
   // لوکال کار می‌کنه، بعداً می‌تونی URL تورسو رو بدی
