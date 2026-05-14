@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { SigninSchema } from "@/lib/validations";
 import { ApiResponse } from "@/lib/api-responses";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/lib/auth/jwt";
 
