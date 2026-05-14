@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { ApiResponse } from "@/lib/api-responses";
 import { SignupSchema, type SignupInput } from "@/lib/validations";
+import { createSession } from "@/lib/auth/jwt";
 
 export async function POST(req: Request) {
   try {
@@ -34,6 +35,12 @@ export async function POST(req: Request) {
       .returning();
 
     const { password: _, ...safeUser } = newUser;
+
+    await createSession({
+      userId: newUser.id,
+      email: newUser.email,
+      role: newUser.role,
+    });
 
     return ApiResponse.success(safeUser, 201);
   } catch (error) {
