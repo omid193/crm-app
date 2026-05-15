@@ -32,6 +32,17 @@ export default function SignupForm() {
     }
   }, [serverMessage]);
 
+  useEffect(() => {
+    fetch("/api/user")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          // کاربر لاگین کرده → برو داشبورد
+          redirect("/");
+        }
+      });
+  }, []);
+
   const onSubmit = async (data: SignupInput) => {
     setServerMessage(null);
 
