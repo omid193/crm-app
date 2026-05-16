@@ -9,7 +9,7 @@ const secretKey = new TextEncoder().encode(
 export type TokenPayload = {
   userId: number;
   email: string;
-  role: string;
+  role: "jobSeeker" | "employer";
 };
 
 // ساختن Token
