@@ -28,6 +28,7 @@ export async function middleware(req: NextRequest) {
     });
   } catch (error) {
     return NextResponse.json({ error: "pleas login again" }, { status: 401 });
+    console.log(error);
   }
 }
 
