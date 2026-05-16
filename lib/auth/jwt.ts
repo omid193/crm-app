@@ -36,7 +36,7 @@ export async function createSession(payload: TokenPayload) {
   const cookieStore = await cookies();
   cookieStore.set("token", token, {
     httpOnly: true, // فقط سرور می‌تونه بخوندش
-    secure: true, // فقط روی HTTPS (امن‌تر)
+    secure: false, // فقط روی HTTPS (امن‌تر)
     sameSite: "lax", // محافظت از CSRF
     maxAge: 60 * 60 * 24 * 7, // ۷ روز به ثانیه
     path: "/", // توی همه آدرس‌ها
