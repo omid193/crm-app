@@ -1,7 +1,6 @@
 // middleware.ts
 import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
-import mainConfig from "@/lib/config";
 
 const key = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -14,9 +13,19 @@ export async function middleware(req: NextRequest) {
 
   try {
     const { payload } = await jwtVerify(token, key);
-    console.log("user", payload);
 
-    return NextResponse.next();
+    const headers = new Headers(req.headers);
+    // نام گذاری با ایکس یه جور قانونیه که این هدر رو خودمون کاستم اضافه کردیم
+    headers.set("x-user-id", String(payload.userId));
+    headers.set("x-user-email", String(payload.email));
+    headers.set("x-user-role", String(payload.role));
+
+    return NextResponse.next({
+      // درخواست جدید
+      request: {
+        headers: headers, // ← Header های درخواست جدید
+      },
+    });
   } catch (error) {
     return NextResponse.json({ error: "pleas login again" }, { status: 401 });
   }
