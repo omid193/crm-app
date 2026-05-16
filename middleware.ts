@@ -1,17 +1,25 @@
 // middleware.ts
+import { jwtVerify } from "jose";
 import { NextRequest, NextResponse } from "next/server";
+import mainConfig from "@/lib/config";
 
-export function middleware(req: NextRequest) {
+const key = new TextEncoder().encode(process.env.JWT_SECRET);
+
+export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
-
-  console.log(token);
 
   if (!token) {
     return NextResponse.json({ error: "ابتدا وارد شوید" }, { status: 401 });
   }
 
-  // اگه Token بود = بذار ادامه بده
-  return NextResponse.next();
+  try {
+    const { payload } = await jwtVerify(token, key);
+    console.log("user", payload);
+
+    return NextResponse.next();
+  } catch (error) {
+    return NextResponse.json({ error: "pleas login again" }, { status: 401 });
+  }
 }
 
 // فقط این مسیرها محافظت بشن
