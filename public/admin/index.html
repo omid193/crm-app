@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مدیریت محتوا - پورتفولیو</title>
+    <style>
+      /* یه استایل ساده برای اینکه صفحه خالی نباشه موقع بارگذاری */
+      body {
+        font-family: system-ui, sans-serif;
+        background: #0f0f0f;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        direction: rtl;
+      }
+      .loading {
+        text-align: center;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading">
+      <p>⚡ در حال بارگذاری پنل مدیریت...</p>
+    </div>
+    <script
+      type="module"
+      src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"
+    ></script>
+  </body>
+</html>
