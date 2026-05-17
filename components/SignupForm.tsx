@@ -26,7 +26,7 @@ export default function SignupForm() {
     if (serverMessage?.type === "success") {
       const timer = setTimeout(() => {
         setServerMessage(null);
-        redirect("/");
+        redirect("/dashboard");
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -38,7 +38,7 @@ export default function SignupForm() {
       .then((data) => {
         if (data.user) {
           // کاربر لاگین کرده → برو داشبورد
-          redirect("/");
+          redirect("/dashboard");
         }
       });
   }, []);
@@ -104,6 +104,24 @@ export default function SignupForm() {
         />
         {errors.password && (
           <p className="text-red-500 text-sm">{errors.password.message}</p>
+        )}
+      </div>
+
+      {/* role */}
+      <div>
+        <select {...register("role")} className="border p-2 rounded w-full">
+          <option value="" className="bg-blue-950">
+            -- انتخاب نقش --
+          </option>
+          <option value="jobSeeker" className="bg-blue-950">
+            کارجو
+          </option>
+          <option value="employer" className="bg-blue-950">
+            کارفرما
+          </option>
+        </select>
+        {errors.role && (
+          <p className="text-red-500 text-sm">{errors.role.message}</p>
         )}
       </div>
 

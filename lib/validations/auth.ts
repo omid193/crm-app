@@ -12,6 +12,7 @@ export const SignupSchema = z.object({
   password: z
     .string({ required_error: "email required " })
     .min(6, "password have be 6 characters"),
+  role: z.enum(["jobSeeker", "employer"], { required_error: "role required" }),
 });
 
 // Schema برای Login (فیلدهای کمتری داره)

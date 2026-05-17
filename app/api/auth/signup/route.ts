@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       return ApiResponse.badRequest(firstError.message);
     }
 
-    const { name, email, password } = validation.data;
+    const { name, email, password, role } = validation.data;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const existingEmail = await db
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
 
     const [newUser] = await db
       .insert(users)
-      .values({ name, email, password: hashedPassword })
+      .values({ name, email, role, password: hashedPassword })
       .returning();
 
     const { password: _, ...safeUser } = newUser;
