@@ -6,6 +6,12 @@ const key = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
+  const path = req.nextUrl.pathname;
+  const method = req.method;
+
+  if (method === "GET") {
+    return NextResponse.next();
+  }
 
   if (!token) {
     return NextResponse.json({ error: "ابتدا وارد شوید" }, { status: 401 });
@@ -13,6 +19,15 @@ export async function middleware(req: NextRequest) {
 
   try {
     const { payload } = await jwtVerify(token, key);
+
+    if (path === "/api/posts" && method === "POST") {
+      if (payload.role !== "employer") {
+        return NextResponse.json(
+          { error: "فقط کار فرما میتوند اگهی بگذارد" },
+          { status: 403 },
+        );
+      }
+    }
 
     const headers = new Headers(req.headers);
     // نام گذاری با ایکس یه جور قانونیه که این هدر رو خودمون کاستم اضافه کردیم
@@ -27,8 +42,7 @@ export async function middleware(req: NextRequest) {
       },
     });
   } catch (error) {
-    return NextResponse.json({ error: "pleas login again" }, { status: 401 });
-    console.log(error);
+    return NextResponse.json({ error }, { status: 401 });
   }
 }
 
