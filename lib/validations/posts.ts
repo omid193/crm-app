@@ -1,7 +1,9 @@
 import z from "zod";
 
 export const PostSchema = z.object({
-  title: z.string(),
+  title: z
+    .string({ required_error: "title required" })
+    .min(1, "title required"),
   description: z.string(),
   category: z.enum(
     ["frontend", "backend", "fullstack", "devops", "mobile", "data"],

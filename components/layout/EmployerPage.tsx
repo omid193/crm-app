@@ -22,10 +22,9 @@ export default function EmployerPage({
 
   const handlePostCreated = () => {
     setServerMessage({ type: "success", text: "آگهی با موفقیت ثبت شد 🎉" });
-
-    // رفرش صفحه برای گرفتن داده‌های جدید از سرور
     router.refresh();
   };
+
   return (
     <main className="max-w-4xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-8">داشبورد کارفرما</h1>
@@ -33,10 +32,10 @@ export default function EmployerPage({
       {/* فرم ساخت آگهی */}
       <div className="bg-sky-950 p-6 rounded-lg shadow mb-8">
         <h2 className="text-xl font-bold mb-4">آگهی جدید</h2>
-        <CreatePostForm onSuccess={handlePostCreated} />
+        <CreatePostForm onSuccess={handlePostCreated}  />
         {serverMessage && (
           <p
-            className={`text-sm p-2 rounded mb-4 ${
+            className={`text-sm p-2 text-center rounded m-4 ${
               serverMessage.type === "success"
                 ? "text-green-600 bg-green-50"
                 : "text-red-500 bg-red-50"

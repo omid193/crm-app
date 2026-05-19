@@ -41,10 +41,9 @@ export function CreatePostForm({ onSuccess }: { onSuccess?: () => void }) {
     onSuccess?.(); // ← صدا زدن callback برای رفرش
   };
 
-  
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* title */}
       <div>
         <input
           {...register("title")}
@@ -56,6 +55,7 @@ export function CreatePostForm({ onSuccess }: { onSuccess?: () => void }) {
         )}
       </div>
 
+      {/* description */}
       <div>
         <textarea
           {...register("description")}
@@ -68,10 +68,16 @@ export function CreatePostForm({ onSuccess }: { onSuccess?: () => void }) {
         )}
       </div>
 
+      {/* category */}
       <div>
-        <select {...register("category")} className="border p-2 rounded w-full">
-          <option value="">دسته‌بندی</option>
-          <option value="frontend">Frontend</option>
+        <p>دسته بندی</p>
+        <select
+          {...register("category")}
+          className="border p-2 rounded w-full text-gray-900"
+        >
+          <option className="text-gray-900" value="frontend">
+            Frontend
+          </option>
           <option value="backend">Backend</option>
           <option value="fullstack">Fullstack</option>
           <option value="devops">DevOps</option>
@@ -83,6 +89,7 @@ export function CreatePostForm({ onSuccess }: { onSuccess?: () => void }) {
         )}
       </div>
 
+      {/* location & salary */}
       <div className="grid grid-cols-2 gap-4">
         <input
           {...register("location")}
