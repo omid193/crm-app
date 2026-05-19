@@ -26,7 +26,7 @@ export default function SigninForm() {
     if (serverMessage?.type === "success") {
       const timer = setTimeout(() => {
         setServerMessage(null);
-        redirect("/");
+        redirect("/dashboard");
       }, 2000);
       return () => clearTimeout(timer);
     }
