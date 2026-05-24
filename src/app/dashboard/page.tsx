@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/auth/jwt";
+import { getSession } from "@/src/shared/lib/auth/jwt";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {

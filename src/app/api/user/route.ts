@@ -1,5 +1,5 @@
-import { ApiResponse } from "@/lib/api-responses";
-import { verifyToken } from "@/lib/auth/jwt";
+import { ApiResponse } from "@/src/shared/lib/api-responses";
+import { verifyToken } from "@/src/shared/lib/auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

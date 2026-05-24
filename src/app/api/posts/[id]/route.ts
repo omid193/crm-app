@@ -1,7 +1,7 @@
 // app/api/posts/[id]/route.ts
-import { ApiResponse } from "@/lib/api-responses";
-import { db } from "@/lib/db";
-import { posts } from "@/lib/db/schema";
+import { ApiResponse } from "@/src/shared/lib/api-responses";
+import { db } from "@/src/shared/lib/db";
+import { posts } from "@/src/shared/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
 

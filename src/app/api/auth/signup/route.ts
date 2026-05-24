@@ -1,11 +1,11 @@
 // app/api/auth/signup/route.ts
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import { db } from "@/lib/db";
-import { users } from "@/lib/db/schema";
-import { ApiResponse } from "@/lib/api-responses";
-import { SignupSchema, type SignupInput } from "@/lib/validations";
-import { createSession } from "@/lib/auth/jwt";
+import { db } from "@/src/shared/lib/db";
+import { users } from "@/src/shared/lib/db/schema";
+import { ApiResponse } from "@/src/shared/lib/api-responses";
+import { SignupSchema, type SignupInput } from "@/src/shared/lib/validations";
+import { createSession } from "@/src/shared/lib/auth/jwt";
 
 export async function POST(req: Request) {
   try {

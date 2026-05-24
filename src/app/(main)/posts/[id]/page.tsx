@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { posts, users } from "@/lib/db/schema";
+import { db } from "@/src/shared/lib/db";
+import { posts, users } from "@/src/shared/lib/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { notFound } from "next/navigation";

@@ -4,7 +4,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { PostSchema, type PostInput } from "@/lib/validations/posts";
+import { PostSchema, type PostInput } from "@/src/shared/lib/validations/posts";
 
 export function CreatePostForm({ onSuccess }: { onSuccess?: () => void }) {
   const [serverMessage, setServerMessage] = useState<{

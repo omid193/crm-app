@@ -1,6 +1,6 @@
 "use client";
 
-import { posts } from "@/lib/db/schema";
+import { posts } from "@/src/shared/lib/db/schema";
 import { CreatePostForm } from "../forms/CreatePostForm";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
