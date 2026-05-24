@@ -5,7 +5,7 @@ import config from "./src/shared/lib/config";
 // ۲. اکسپورت تنظیمات
 export default {
   // ۳. مسیر فایل schema
-  schema: "./lib/db/schema",
+  schema: "./src/shared/lib/db/schema",
   // ۴. مسیر خروجی مایگریشن‌ها
   out: "./drizzle",
   // ۵. نوع دیتابیس
