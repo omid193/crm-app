@@ -1,0 +1,49 @@
+import { eq } from "drizzle-orm";
+import { db } from "@/src/shared/lib/db";
+import { users } from "@/src/shared/lib/db/schema";
+import { SigninSchema } from "@/src/shared/lib/validations";
+import { ApiResponse } from "@/src/shared/lib/api-responses";
+import { NextRequest } from "next/server";
+import bcrypt from "bcryptjs";
+import { createSession } from "@/src/features/auth/lib/jwt";
+
+export async function signinHandler(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const validation = SigninSchema.safeParse(body);
+
+    if (!validation.success) {
+      const firstError = validation.error.errors[0].message;
+      return ApiResponse.badRequest(firstError);
+    }
+    const { email, password } = validation.data;
+
+    const foundUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (foundUser.length === 0) {
+      return ApiResponse.unauthorized("email or password is invalid ");
+    }
+    const user = foundUser[0];
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return ApiResponse.unauthorized("email or password is invalid ");
+    }
+    const { password: _, ...safeUser } = user;
+
+    await createSession({
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    return ApiResponse.success(safeUser, 200);
+  } catch (error) {
+    console.log(error);
+    return ApiResponse.serverError(error);
+  }
+}

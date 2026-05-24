@@ -3,7 +3,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PostSchema, type PostInput } from "@/src/features/auth/validations/posts";
+import { PostSchema, type PostInput } from "@/src/shared/lib/validations/posts";
 import { useState } from "react";
 
 type Props = {
