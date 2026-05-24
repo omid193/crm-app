@@ -1,11 +1,11 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/src/shared/lib/db";
 import { users } from "@/src/shared/lib/db/schema";
-import { SigninSchema } from "@/src/shared/lib/validations";
+import { SigninSchema } from "@/src/features/auth/validations";
 import { ApiResponse } from "@/src/shared/lib/api-responses";
 import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs";
-import { createSession } from "@/src/shared/lib/auth/jwt";
+import { createSession } from "@/src/features/auth/lib/jwt";
 
 export async function POST(req: NextRequest) {
   try {

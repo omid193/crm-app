@@ -1,4 +1,4 @@
-import SigninForm from "@/src/shared/components/forms/SigninForm";
+import SigninForm from "@/src/features/auth/components/SigninForm";
 
 export default function signinPage() {
   return (

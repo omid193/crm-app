@@ -1,7 +1,7 @@
 import { ApiResponse } from "@/src/shared/lib/api-responses";
 import { db } from "@/src/shared/lib/db";
 import { posts } from "@/src/shared/lib/db/schema";
-import { PostInput, PostSchema } from "@/src/shared/lib/validations/posts";
+import { PostInput, PostSchema } from "@/src/features/auth/validations/posts";
 import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { SignupInput, SignupSchema } from "@/src/shared/lib/validations";
+import { SignupInput, SignupSchema } from "@/src/features/auth/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";

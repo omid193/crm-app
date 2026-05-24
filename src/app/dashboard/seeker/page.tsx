@@ -1,5 +1,5 @@
 // app/(dashboard)/seeker/page.tsx
-import { getSession } from "@/src/shared/lib/auth/jwt";
+import { getSession } from "@/src/features/auth/lib/jwt";
 import { redirect } from "next/navigation";
 
 export default async function SeekerDashboard() {

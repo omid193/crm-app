@@ -1,6 +1,6 @@
 // app/dashboard/employer/page.tsx
-import EmployerPage from "@/src/feature/employer/components/EmployerPage";
-import { getSession } from "@/src/shared/lib/auth/jwt";
+import EmployerPage from "@/src/features/employer/components/EmployerPage";
+import { getSession } from "@/src/features/auth/lib/jwt";
 import { db } from "@/src/shared/lib/db";
 import { posts } from "@/src/shared/lib/db/schema";
 import { desc, eq } from "drizzle-orm";
