@@ -20,10 +20,13 @@ export async function proxy(req: NextRequest) {
   try {
     const { payload } = await jwtVerify(token, key);
 
-    if (path === "/api/posts" && method === "POST") {
+    if (
+      path.startsWith("/api/posts") &&
+      ["POST", "DELETE", "PUT"].includes(method)
+    ) {
       if (payload.role !== "employer") {
         return NextResponse.json(
-          { error: "فقط کار فرما میتوند اگهی بگذارد" },
+          { error: "فقط کارفرما می‌تونه این کار رو انجام بده" },
           { status: 403 },
         );
       }

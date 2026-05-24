@@ -1,6 +1,7 @@
 // src/feature/employer/components/PostList.tsx
 import type { posts } from "@/src/shared/lib/db/schema";
 import DeletePostButton from "./DeletePostButton";
+import EditPostButton from "./EditPostButton";
 
 type Post = typeof posts.$inferSelect;
 
@@ -44,6 +45,7 @@ export default function PostList({ posts: postList }: Props) {
               </div>
             </div>
             <DeletePostButton postId={post.id} postTitle={post.title} />
+            <EditPostButton post={post} />
           </div>
         </div>
       ))}
