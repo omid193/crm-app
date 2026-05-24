@@ -1,1 +1,1 @@
-export { signupHandler as POST } from "@/src/features/auth/api/signup/handler";
+export { signupHandler as POST } from "@/src/features/auth/server/signup";

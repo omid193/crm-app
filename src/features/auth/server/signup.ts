@@ -4,10 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/src/shared/lib/db";
 import { users } from "@/src/shared/lib/db/schema";
 import { ApiResponse } from "@/src/shared/lib/api-responses";
-import {
-  SignupSchema,
-  type SignupInput,
-} from "@/src/shared/lib/validations";
+import { SignupSchema, type SignupInput } from "@/src/shared/lib/validations";
 import { createSession } from "@/src/features/auth/lib/jwt";
 
 export async function signupHandler(req: Request) {
