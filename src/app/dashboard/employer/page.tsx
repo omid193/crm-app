@@ -1,4 +1,4 @@
-// app/(dashboard)/employer/page.tsx
+// app/dashboard/employer/page.tsx
 import EmployerPage from "@/src/feature/employer/components/EmployerPage";
 import { getSession } from "@/src/shared/lib/auth/jwt";
 import { db } from "@/src/shared/lib/db";
@@ -19,5 +19,5 @@ export default async function EmployerDashboard() {
     .where(eq(posts.authorId, session.userId))
     .orderBy(desc(posts.createdAt));
 
-  return <EmployerPage userPosts={userPosts} userId={session.userId} />;
+  return <EmployerPage userPosts={userPosts} />;
 }
