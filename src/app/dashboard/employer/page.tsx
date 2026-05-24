@@ -1,5 +1,5 @@
 // app/(dashboard)/employer/page.tsx
-import EmployerPage from "@/components/layout/EmployerPage";
+import EmployerPage from "@/src/feature/employer/components/EmployerPage";
 import { getSession } from "@/src/shared/lib/auth/jwt";
 import { db } from "@/src/shared/lib/db";
 import { posts } from "@/src/shared/lib/db/schema";
