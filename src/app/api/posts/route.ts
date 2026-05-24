@@ -1,1 +1,1 @@
-export { createPostHandler as POST } from "@/src/features/posts/api/create/handler";
+export { createPostHandler as POST } from "@/src/features/posts/server/create-post";
