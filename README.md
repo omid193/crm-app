@@ -1,246 +1,267 @@
-```markdown
-# SQLite + Drizzle + Next.js — راهنمای سریع
 
-## نصب
+# Job Board - Full-Stack Next.js Application
+
+A modern, production-grade job board application built with Next.js 15, featuring role-based access control, JWT authentication, and a feature-based architecture.
+
+## 📁 Project Structure
+
+```markdown
+src/
+├── app/                            # Next.js App Router (routes only)
+│   ├── (auth)/                     # Auth group (public routes)
+│   │   ├── signin/page.tsx         # Sign in page
+│   │   └── signup/page.tsx         # Sign up page
+│   │
+│   ├── (main)/                     # Main group (public routes)
+│   │   └── posts/                  # Public job listings
+│   │       ├── [id]/page.tsx       # Single post detail
+│   │       └── page.tsx            # All posts listing
+│   │
+│   ├── api/                        # API Routes (thin layer)
+│   │   ├── auth/
+│   │   │   ├── signin/route.ts     # Sign in endpoint
+│   │   │   └── signup/route.ts     # Sign up endpoint
+│   │   ├── posts/
+│   │   │   ├── [id]/route.ts       # PUT & DELETE post
+│   │   │   └── route.ts            # POST create post
+│   │   └── user/route.ts           # Current user info
+│   │
+│   ├── dashboard/                  # Protected dashboard routes
+│   │   ├── employer/page.tsx       # Employer dashboard
+│   │   ├── seeker/page.tsx         # Job seeker dashboard
+│   │   └── page.tsx                # Dashboard redirect (by role)
+│   │
+│   ├── layout.tsx                  # Root layout
+│   ├── page.tsx                    # Landing page
+│   └── globals.css                 # Global styles (dark theme)
+│
+├── features/                       # Feature-based modules
+│   ├── auth/                       # Authentication feature
+│   │   ├── components/             # UI components
+│   │   │   ├── SigninForm.tsx      # Sign in form (React Hook Form + Zod)
+│   │   │   └── SignupForm.tsx      # Sign up form (React Hook Form + Zod)
+│   │   ├── lib/                    # Auth utilities
+│   │   │   ├── jwt.ts              # JWT creation & verification (jose)
+│   │   │   └── password.ts         # Password hashing (bcryptjs)
+│   │   └── server/                 # Server-side handlers
+│   │       ├── signin.ts           # Sign in business logic
+│   │       └── signup.ts           # Sign up business logic
+│   │
+│   ├── employer/                   # Employer feature
+│   │   └── components/
+│   │       ├── CreatePostForm.tsx   # Job posting form
+│   │       ├── DeletePostButton.tsx # Delete confirmation button
+│   │       ├── EditPostButton.tsx   # Edit modal trigger
+│   │       ├── EditPostForm.tsx     # Edit job form (modal)
+│   │       ├── EmployerPage.tsx     # Employer dashboard (client)
+│   │       └── PostList.tsx         # Employer's job listings
+│   │
+│   ├── posts/                      # Posts feature
+│   │   └── server/                 # Server-side handlers
+│   │       ├── create-post.ts      # Create post logic
+│   │       ├── delete-post.ts      # Delete post logic
+│   │       └── update-post.ts      # Update post logic
+│   │
+│   └── seeker/                     # Job seeker feature (ready for expansion)
+│
+├── shared/                         # Shared modules
+│   ├── components/
+│   │   └── layout/
+│   │       └── Header.tsx          # Site header component
+│   └── lib/
+│       ├── db/                     # Database layer
+│       │   ├── schema/             # Drizzle ORM schemas
+│       │   │   ├── index.ts        # Schema exports
+│       │   │   ├── posts.ts        # Job posts table
+│       │   │   ├── profiles.ts     # User profiles table
+│       │   │   └── users.ts        # Users table
+│       │   └── index.ts            # Database connection (LibSQL)
+│       ├── validations/            # Zod validation schemas
+│       │   ├── auth.ts             # Signin & Signup schemas
+│       │   ├── index.ts            # Validation exports
+│       │   └── posts.ts            # Post CRUD schemas
+│       ├── api-responses.ts        # Standardized API responses
+│       └── config.ts               # Environment configuration
+│
+└── proxy.ts                        # API proxy configuration
+```
+
+## 🏗️ Architecture
+
+### Thin Pages Pattern
+
+The `app/` directory contains only routing logic. All business logic lives in `features/`. API routes are a single `export` line that delegates to handlers.
+
+```typescript
+// app/api/auth/signin/route.ts
+export { signin as POST } from "@/features/auth/server/signin";
+```
+
+### Feature-Based Architecture
+
+Each feature is self-contained with its own components, server logic, and utilities:
+
+- **`features/auth/`** — Authentication (sign in, sign up, JWT)
+- **`features/employer/`** — Employer dashboard & job management
+- **`features/posts/`** — Job post CRUD operations
+- **`features/seeker/`** — Job seeker functionality (extensible)
+
+### Hybrid Rendering
+
+- **Server Components** — Data fetching, session checks, page layouts
+- **Client Components** — Forms, interactive UI, modals
+- **`router.refresh()`** — Real-time UI updates after mutations without full reload
+
+## 🔐 Authentication & Authorization
+
+### JWT + HTTP-Only Cookies
+
+- Tokens are stored in HTTP-only cookies (inaccessible to JavaScript)
+- Created using `jose` library (modern, Edge-compatible)
+- 7-day expiration with automatic renewal
+
+### Middleware Protection
+
+```typescript
+// middleware.ts
+- Protects /api/posts routes
+- Verifies JWT token from cookies
+- Injects user info (x-user-id, x-user-email, x-user-role) into headers
+- Role-based access: only employers can POST/PUT/DELETE
+- GET requests are public
+```
+
+### Role-Based Access Control
+
+| Role | Permissions |
+|:---|:---|
+| **employer** | Create, edit, delete own job posts |
+| **jobSeeker** | View all job posts, edit profile |
+| **public** | View all job posts (GET only) |
+
+## 🗄️ Database
+
+### Schema (Drizzle ORM + SQLite/LibSQL)
+
+**Users** — id, name, email, password (hashed), role (employer/jobSeeker), timestamps
+
+**Profiles** — id, bio, userId (one-to-one with users)
+
+**Posts** — id, title, description, category, location, salary, authorId (FK to users), timestamps
+
+### Relationships
+
+- User → Profile (One-to-One)
+- User → Posts (One-to-Many)
+- All deletions cascade
+
+## 🛡️ Security
+
+| Measure | Implementation |
+|:---|:---|
+| Password Hashing | bcryptjs with salt rounds (10) |
+| JWT Secret | Environment variable (`JWT_SECRET`) |
+| HTTP-Only Cookies | JavaScript cannot access tokens |
+| CSRF Protection | `sameSite: "lax"` cookie attribute |
+| Input Validation | Zod schemas on both client & server |
+| Ownership Check | Posts can only be modified by their author |
+| Password in Response | Never returned (destructured out) |
+
+## 🎨 UI/UX
+
+- **Dark theme** — Tailwind CSS with gray-900/800/700 palette
+- **Responsive** — Mobile-first design
+- **Form validation** — React Hook Form + Zod with Persian error messages
+- **Loading states** — `isSubmitting` flags on all forms
+- **Success/Error messages** — Color-coded (green/red) with auto-dismiss
+- **Modal** — Edit post in a modal overlay
+- **Confirmation** — Delete requires user confirmation
+
+## 🧰 Tech Stack
+
+| Layer | Technology |
+|:---|:---|
+| **Framework** | Next.js 15 (App Router) |
+| **Language** | TypeScript (strict) |
+| **Database** | SQLite (local) / LibSQL |
+| **ORM** | Drizzle ORM |
+| **Auth** | JWT (jose) + HTTP-only cookies |
+| **Validation** | Zod |
+| **Forms** | React Hook Form + @hookform/resolvers |
+| **Password** | bcryptjs |
+| **Styling** | Tailwind CSS |
+| **Icons** | Emoji (📍 💰) |
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
 
 ```bash
-npm install @libsql/client drizzle-orm
-npm install -D drizzle-kit tsx
-```
-داداش، خیلی سوال خوبی پرسیدی. بیا کامل برات بازش کنم.
+# Clone the repository
+git clone <repo-url>
 
----
+# Install dependencies
+npm install
 
-## ساختاری که دیدی چیه؟
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your values
 
-این ساختاری که دیدی، **دقیقاً روش استاندارد Drizzle با LibSQL/Turso** هست. از `@libsql/client` به جای `better-sqlite3` استفاده می‌کنه. تفاوت اصلی‌شون اینه:
+# Push database schema
+npm run db:push
 
-| ویژگی | `better-sqlite3` | `@libsql/client` |
-|--------|------------------|------------------|
-| **نوع اتصال** | مستقیم به فایل | HTTP یا فایل |
-| **آینده** | فقط لوکال | لوکال + بعداً می‌تونی به Turso (ابری) وصل بشی |
-| **نیاز به کامپایل** | داره (C++ bindings) | نداره (خالص JS) |
-| **مناسب برای** | پروژه لوکال خالص | پروژه‌ای که بعداً می‌خواد آنلاین بشه |
-
----
-
-## بررسی ساختار پوشه‌بندی
-
-### روشی که دیدی:
-```
-src/lib/db/
-├── db.ts          # اتصال به دیتابیس
-├── schema/
-│   ├── index.ts   # جمع‌آوری و خروجی گرفتن همه اسکیماها
-│   └── auth.ts    # اسکیمای احراز هویت
-│   └── jobs.ts    # اسکیمای آگهی‌های شغلی (بعداً اضافه میشه)
+# Start development server
+npm run dev
 ```
 
-### روش ساده‌تری که من گفتم:
-```
-db/
-├── index.ts       # اتصال به دیتابیس
-└── schema.ts      # همه اسکیماها توی یه فایل
-```
-
----
-
-## کدوم روش بهتره؟
-
-### روش ماژولار (همونی که دیدی) ✅ استاندارد حرفه‌ای
-**مزایا:**
-- هر بخش منطقی (Auth, Jobs, Payments) اسکیمای جدا داره
-- برای پروژه‌های بزرگ عالیه
-- طبق اصول **Separation of Concerns** هست
-- وقتی پروژه بزرگ بشه، مدیریتش راحت‌تره
-- کاملاً طبق داکیومنت Drizzle هست
-
-**معایب:**
-- برای پروژه کوچک و یادگیری شاید زیادی پیچیده باشه
-
-### روش تک فایلی (روش ساده من) 📝 برای شروع و یادگیری
-**مزایا:**
-- سریع راه می‌افته
-- همه چی یه جا هست، راحت می‌بینی
-- برای دوره آموزشی که داری می‌بینی کافیه
-
-**معایب:**
-- وقتی ۱۰-۱۵ مدل داشته باشی، فایل شلوغ میشه
-- حرفه‌ای نیست
-
----
-
-## توصیه من برای دوره تو
-
-با توجه به اینکه داری دوره Job Board رو می‌بینی، **روش ماژولار رو انتخاب کن** اما نه خیلی پیچیده. یه ساختار منطقی و تمیز:
-
-```
-lib/
-└── db/
-    ├── db.ts              # اتصال اصلی
-    ├── schema/
-    │   ├── index.ts       # جمع کردن همه
-    │   ├── users.ts       # اسکیمای کاربران
-    │   └── posts.ts       # اسکیمای آگهی‌های شغلی
-    └── seed.ts            # داده اولیه (اختیاری)
-```
-
----
-
-## فایل‌های کامل برای دوره Job Board
-
-### ۱. فایل `lib/db/db.ts` (اتصال به دیتابیس)
-
-```typescript
-// lib/db/db.ts
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
-import * as schema from "./schema";
-
-const client = createClient({
-  // لوکال کار می‌کنه، بعداً می‌تونی URL تورسو رو بدی
-  url: process.env.DATABASE_URL ?? "file:./prisma/dev.db",
-});
-
-export const db = drizzle(client, { schema });
-```
-
-**نکته:** این ساختار دقیقاً طبق داکیومنت رسمی Drizzle هست.
-
----
-
-### ۲. فایل `lib/db/schema/users.ts` (اسکیمای کاربران)
-
-```typescript
-// lib/db/schema/users.ts
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { relations } from "drizzle-orm";
-import { posts } from "./posts";
-
-export const users = sqliteTable("users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  email: text("email").notNull().unique(),
-  name: text("name"),
-  password: text("password").notNull(),
-  role: text("role", { enum: ["jobSeeker", "employer"] })
-    .notNull()
-    .default("jobSeeker"),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date())
-    .$onUpdate(() => new Date()),
-});
-
-// رابطه: هر کاربر چندین آگهی داره
-export const usersRelations = relations(users, ({ many }) => ({
-  posts: many(posts),
-}));
-```
-
----
-
-### ۳. فایل `lib/db/schema/posts.ts` (اسکیمای آگهی‌های شغلی)
-
-```typescript
-// lib/db/schema/posts.ts
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { relations } from "drizzle-orm";
-import { users } from "./users";
-
-export const posts = sqliteTable("posts", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  category: text("category", {
-    enum: ["frontend", "backend", "fullstack", "devops", "mobile", "data"],
-  }).notNull(),
-  location: text("location"),
-  salary: text("salary"),
-  authorId: integer("author_id")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  createdAt: integer("created_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
-    .$defaultFn(() => new Date())
-    .$onUpdate(() => new Date()),
-});
-
-// رابطه: هر آگهی متعلق به یه کاربره
-export const postsRelations = relations(posts, ({ one }) => ({
-  author: one(users, {
-    fields: [posts.authorId],
-    references: [users.id],
-  }),
-}));
-```
-
----
-
-### ۴. فایل `lib/db/schema/index.ts` (جمع کردن همه اسکیماها)
-
-```typescript
-// lib/db/schema/index.ts
-export * from "./users";
-export * from "./posts";
-```
-
----
-
-### ۵. فایل `.env` (تنظیمات محیطی)
+### Environment Variables
 
 ```env
 DATABASE_URL="file:./dev.db"
+JWT_SECRET="your-secret-key-change-me"
 ```
+
+## 📝 API Reference
+
+### Authentication
+
+| Method | Endpoint | Description | Auth |
+|:---|:---|:---|:---|
+| POST | `/api/auth/signup` | Create account | No |
+| POST | `/api/auth/signin` | Sign in | No |
+| GET | `/api/auth/logout` | Sign out | No |
+
+### Posts
+
+| Method | Endpoint | Description | Auth |
+|:---|:---|:---|:---|
+| GET | `/api/posts` | Get all posts | No |
+| GET | `/api/posts/:id` | Get single post | No |
+| POST | `/api/posts` | Create post | Employer |
+| PUT | `/api/posts/:id` | Update post | Employer (owner) |
+| DELETE | `/api/posts/:id` | Delete post | Employer (owner) |
+
+### User
+
+| Method | Endpoint | Description | Auth |
+|:---|:---|:---|:---|
+| GET | `/api/user` | Get current user | Yes |
+
+## 🧪 Testing (Coming Soon)
+
+- **Vitest** — Unit & integration tests
+- **React Testing Library** — Component tests
+- **MSW** — API mocking
+
+## 📄 License
+
+MIT
 
 ---
 
-## مقایسه با روش ساده (تک فایلی)
-
-### روش ساده (همه توی `schema.ts`):
-```typescript
-// db/schema.ts - همه چی یه جا
-export const users = sqliteTable("users", { ... });
-export const posts = sqliteTable("posts", { ... });
-export const usersRelations = relations(users, ({ many }) => ({ ... }));
-export const postsRelations = relations(posts, ({ one }) => ({ ... }));
-```
-
-### روش ماژولار (ساختار حرفه‌ای):
-```
-schema/
-├── index.ts    // فقط صادرات مجدد
-├── users.ts    // فقط کاربران
-└── posts.ts    // فقط آگهی‌ها
-```
-
----
-
-## نام‌گذاری‌ها: آیا اصولی و طبق داکیومنت هست؟
-
-**بله، کاملاً استاندارد هست:**
-
-| چیز | نام‌گذاری | طبق داکیومنت؟ |
-|-----|-----------|----------------|
-| پوشه اصلی | `lib/db/` | ✅ (می‌تونه `db/` هم باشه) |
-| فایل اتصال | `db.ts` | ✅ |
-| پوشه اسکیماها | `schema/` | ✅ (اختیاری ولی رایجه) |
-| فایل جمع‌کننده | `index.ts` | ✅ (الگوی بشکه‌ای - Barrel Export) |
-| اسکیمای کاربران | `users.ts` | ✅ |
-| اسکیمای آگهی‌ها | `posts.ts` | ✅ |
-
----
-
-## جمع‌بندی و پیشنهاد نهایی
-
-**برای دوره Job Board، ساختار ماژولار رو برو.** دلایل:
-
-1. **حرفه‌ای‌تره** - یاد می‌گیری پروژه واقعی چطور سازماندهی میشه
-2. **با دوره هماهنگه** - دوره هم Prisma رو با مدل‌های جداگونه یاد میده
-3. **آماده برای آینده** - بعداً می‌تونی schema های payments, applications, reviews رو راحت اضافه کنی
-4. **طبق اصول Drizzle** - داکیومنت رسمی هم توی پروژه‌های بزرگ این ساختار رو پیشنهاد میده
-
-**نگران نباش**، پیچیده نیست. فقط فایل‌ها جدا شدن ولی logic همونه. هر جا که توی دوره از `prisma.user.create()` استفاده می‌کنه، تو از `db.insert(users).values()` استفاده می‌کنی.
-
-اگه می‌خوای، می‌تونم یه **Cheat Sheet** برات درست کنم که دقیقاً بگم هر دستور Prisma توی دوره، معادلش توی Drizzle چی میشه.
+Built with ❤️ as a learning project for modern full-stack Next.js development.
